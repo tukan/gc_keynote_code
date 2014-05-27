@@ -16,7 +16,7 @@ def run(ruby_version, env=None):
 	rss_s = []
 
 	for _ in xrange(RUNS):
-		output = subprocess.check_output(command, shell=True, env=env)
+		output = subprocess.check_output(command, shell=True, env=run_env)
 		output = output.split('\n')
 		version = output[0]
 		durations.append(float(output[1].split(' ')[1])) 
