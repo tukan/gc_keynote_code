@@ -3,10 +3,11 @@ import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
 
+ENV = os.environ.copy()
 RUNS = 10
 
 def run(ruby_version, env=None):
-  run_env = os.environ.copy()
+  run_env = ENV.copy()
   if env is not None:
     run_env.update(env)
   
@@ -109,7 +110,8 @@ if __name__ == "__main__":
   labels = []
   data = []
 
-  for version in ('1.9.3-p545', '2.0.0-p353', '2.1.2', '2.2.0-dev'):
+  # for version in ('1.9.3-p545', '2.0.0-p353', '2.1.2', '2.2.0-dev'):
+  for version in ('2.1.2', '2.2.0-dev'):
     data.append(run(version))
     labels.append(version)
 	
@@ -120,6 +122,9 @@ if __name__ == "__main__":
   data.append(run('2.1.2', {'RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR': '0.9'}))
 
   labels.append('2.1.2 [3]')
+  data.append(run('2.1.2', {'RUBY_GC_HEAP_INIT_SLOTS': '600000', 'RUBY_GC_HEAP_FREE_SLOTS': '1600000'}))
+
+  labels.append('2.1.2 [4]')
   data.append(run('2.1.2', {'RUBY_GC_MALLOC_LIMIT_MAX': '8000000', 'RUBY_GC_OLDMALLOC_LIMIT_MAX': '8000000'}))
 
   labels.append('2.2.0-dev [1]')
@@ -129,10 +134,14 @@ if __name__ == "__main__":
   data.append(run('2.2.0-dev', {'RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR': '0.9'}))
 
   labels.append('2.2.0-dev [3]')
+  data.append(run('2.2.0-dev', {'RUBY_GC_HEAP_HEAP_SLOTS': '600000', 'RUBY_GC_HEAP_FREE_SLOTS': '1600000'}))
+
+  labels.append('2.2.0-dev [4]')
   data.append(run('2.2.0-dev', {'RUBY_GC_MALLOC_LIMIT_MAX': '8000000', 'RUBY_GC_OLDMALLOC_LIMIT_MAX': '8000000'}))
 
   footnote = '[1] RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR=1.3\n'\
               '[2] RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR=0.9\n'\
-              '[3] RUBY_GC_MALLOC_LIMIT_MAX=8000000 RUBY_GC_OLDMALLOC_LIMIT_MAX=8000000'
+              '[3] RUBY_GC_HEAP_INIT_SLOTS=600000 RUBY_GC_HEAP_FREE_SLOTS=1600000\n'\
+              '[4] RUBY_GC_MALLOC_LIMIT_MAX=8000000 RUBY_GC_OLDMALLOC_LIMIT_MAX=8000000'
 
   plot(labels, data, footnote=footnote)
